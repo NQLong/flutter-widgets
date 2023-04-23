@@ -217,11 +217,14 @@ export 'src/pdf/implementation/pdf_document/pdf_document_template.dart'
     show PdfDocumentTemplate, PdfStampCollection;
 export 'src/pdf/implementation/pdf_document/pdf_file_structure.dart'
     show PdfFileStructure;
+export 'src/pdf/implementation/primitives/pdf_number.dart' show PdfNumber;
+export 'src/pdf/implementation/primitives/pdf_string.dart' show PdfString;
 export 'src/pdf/implementation/security/digital_signature/pdf_certificate.dart'
     show PdfCertificate;
 export 'src/pdf/implementation/security/digital_signature/pdf_external_signer.dart';
 export 'src/pdf/implementation/security/digital_signature/pdf_signature.dart'
     show PdfSignature;
+export 'src/pdf/implementation/security/digital_signature/pdf_signature_dictionary.dart' show PdfSignatureDictionary;
 export 'src/pdf/implementation/security/enum.dart';
 export 'src/pdf/implementation/security/pdf_security.dart'
     show PdfPermissions, PdfSecurity;

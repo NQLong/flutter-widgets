@@ -52,6 +52,7 @@ class PdfCertificate {
         isContinue = false;
       }
     });
+    print(certificateAlias);
     final X509Certificates entry =
         _pkcsCertificate.getCertificate(certificateAlias)!;
     _loadDetails(entry.certificate!);

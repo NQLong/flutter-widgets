@@ -31,29 +31,14 @@ import 'pdf_form.dart';
 class PdfSignatureField extends PdfField {
   //Constructor
   /// Initializes a new instance of the [PdfSignatureField] class.
-  PdfSignatureField(PdfPage page, String name,
-      {Rect bounds = Rect.zero,
-      int borderWidth = 1,
-      PdfHighlightMode? highlightMode,
-      PdfSignature? signature,
-      String? tooltip}) {
+  PdfSignatureField(PdfPage page, String name, {Rect bounds = Rect.zero, int borderWidth = 1, PdfHighlightMode? highlightMode, PdfSignature? signature, String? tooltip}) {
     _helper = PdfSignatureFieldHelper(this);
-    _helper.internal(page, name, bounds,
-        borderWidth: borderWidth,
-        highlightMode: highlightMode,
-        tooltip: tooltip);
+    _helper.internal(page, name, bounds, borderWidth: borderWidth, highlightMode: highlightMode, tooltip: tooltip);
     form!.fieldAutoNaming
-        ? PdfAnnotationHelper.getHelper(_helper.widget!)
-            .dictionary!
-            .setProperty(PdfDictionaryProperties.ft,
-                PdfName(PdfDictionaryProperties.sig))
-        : _helper.dictionary!.setProperty(
-            PdfDictionaryProperties.ft, PdfName(PdfDictionaryProperties.sig));
+        ? PdfAnnotationHelper.getHelper(_helper.widget!).dictionary!.setProperty(PdfDictionaryProperties.ft, PdfName(PdfDictionaryProperties.sig))
+        : _helper.dictionary!.setProperty(PdfDictionaryProperties.ft, PdfName(PdfDictionaryProperties.sig));
     if (PdfPageHelper.getHelper(page).document != null) {
-      PdfFormHelper.getHelper(form!).signatureFlags = <SignatureFlags>[
-        SignatureFlags.signaturesExists,
-        SignatureFlags.appendOnly
-      ];
+      PdfFormHelper.getHelper(form!).signatureFlags = <SignatureFlags>[SignatureFlags.signaturesExists, SignatureFlags.appendOnly];
     }
     if (signature != null) {
       this.signature = signature;
@@ -108,63 +93,39 @@ class PdfSignatureField extends PdfField {
     if (value != null) {
       _signature = value;
       PdfSignatureHelper.getHelper(_signature!).page = page;
-      PdfSignatureHelper.getHelper(_signature!).document =
-          PdfPageHelper.getHelper(
-                  PdfSignatureHelper.getHelper(_signature!).page!)
-              .document;
-      PdfSignatureHelper.getHelper(_signature!)
-          .checkAnnotationElementsContainsSignature(page!, name);
+      PdfSignatureHelper.getHelper(_signature!).document = PdfPageHelper.getHelper(PdfSignatureHelper.getHelper(_signature!).page!).document;
+      PdfSignatureHelper.getHelper(_signature!).checkAnnotationElementsContainsSignature(page!, name);
       PdfSignatureHelper.getHelper(_signature!).field = this;
-      PdfDocumentHelper.getHelper(
-                  PdfSignatureHelper.getHelper(_signature!).document!)
-              .catalog
-              .beginSave =
-          PdfSignatureHelper.getHelper(_signature!).catalogBeginSave;
+      PdfDocumentHelper.getHelper(PdfSignatureHelper.getHelper(_signature!).document!).catalog.beginSave = PdfSignatureHelper.getHelper(_signature!).catalogBeginSave;
       _helper.dictionary!.beginSaveList ??= <SavePdfPrimitiveCallback>[];
-      _helper.dictionary!.beginSaveList!
-          .add(PdfSignatureHelper.getHelper(_signature!).dictionaryBeginSave);
+      _helper.dictionary!.beginSaveList!.add(PdfSignatureHelper.getHelper(_signature!).dictionaryBeginSave);
+      print('hello');
       if (!_helper.skipKidsCertificate) {
-        final PdfDocument document =
-            PdfSignatureHelper.getHelper(_signature!).document!;
-        PdfSignatureHelper.getHelper(_signature!).signatureDictionary =
-            PdfSignatureDictionary(document, _signature!);
-        final PdfSignatureDictionary signatureDictionary =
-            PdfSignatureHelper.getHelper(_signature!).signatureDictionary!;
-        if (!PdfDocumentHelper.getHelper(document).isLoadedDocument ||
-            document.fileStructure.incrementalUpdate != false) {
+        print('hello1');
+        final PdfDocument document = PdfSignatureHelper.getHelper(_signature!).document!;
+        PdfSignatureHelper.getHelper(_signature!).signatureDictionary = PdfSignatureDictionary(document, _signature!);
+        final PdfSignatureDictionary signatureDictionary = PdfSignatureHelper.getHelper(_signature!).signatureDictionary!;
+        if (!PdfDocumentHelper.getHelper(document).isLoadedDocument || document.fileStructure.incrementalUpdate != false) {
           signatureDictionary.dictionary!.archive = false;
-          PdfDocumentHelper.getHelper(document)
-              .objects
-              .add(signatureDictionary.element);
-          PdfDocumentHelper.getHelper(document)
-              .objects[PdfDocumentHelper.getHelper(document).objects.count - 1]
-              .isModified = true;
+          PdfDocumentHelper.getHelper(document).objects.add(signatureDictionary.element);
+          PdfDocumentHelper.getHelper(document).objects[PdfDocumentHelper.getHelper(document).objects.count - 1].isModified = true;
           signatureDictionary.element!.position = -1;
         }
         if (_helper.isLoadedField) {
-          PdfFormHelper.getHelper(form!).signatureFlags = <SignatureFlags>[
-            SignatureFlags.signaturesExists,
-            SignatureFlags.appendOnly
-          ];
-          final PdfDictionary widget = _helper.getWidgetAnnotation(
-              _helper.dictionary!, _helper.crossTable);
-          widget[PdfDictionaryProperties.v] =
-              PdfReferenceHolder(signatureDictionary);
+          PdfFormHelper.getHelper(form!).signatureFlags = <SignatureFlags>[SignatureFlags.signaturesExists, SignatureFlags.appendOnly];
+          final PdfDictionary widget = _helper.getWidgetAnnotation(_helper.dictionary!, _helper.crossTable);
+          widget[PdfDictionaryProperties.v] = PdfReferenceHolder(signatureDictionary);
           widget.modify();
           _helper.changed = true;
           widget.setProperty(PdfDictionaryProperties.fieldFlags, PdfNumber(0));
           signatureDictionary.dictionary!.archive = false;
         } else {
-          final PdfDictionary widget =
-              PdfAnnotationHelper.getHelper(_helper.widget!).dictionary!;
-          widget.setProperty(PdfDictionaryProperties.v,
-              PdfReferenceHolder(signatureDictionary));
+          final PdfDictionary widget = PdfAnnotationHelper.getHelper(_helper.widget!).dictionary!;
+          widget.setProperty(PdfDictionaryProperties.v, PdfReferenceHolder(signatureDictionary));
           widget.setProperty(PdfDictionaryProperties.fieldFlags, PdfNumber(0));
         }
       } else {
-        PdfAnnotationHelper.getHelper(_helper.widget!)
-            .dictionary!
-            .setProperty(PdfDictionaryProperties.fieldFlags, PdfNumber(0));
+        PdfAnnotationHelper.getHelper(_helper.widget!).dictionary!.setProperty(PdfDictionaryProperties.fieldFlags, PdfNumber(0));
       }
       _helper.widget!.bounds = bounds;
     }
@@ -172,17 +133,13 @@ class PdfSignatureField extends PdfField {
 
   void _setSignature(IPdfPrimitive? signature) {
     final PdfCrossTable? crossTable = _helper.crossTable;
-    if (signature is PdfReferenceHolder &&
-        signature.object != null &&
-        signature.object is PdfDictionary) {
-      final PdfDictionary signatureDictionary =
-          signature.object! as PdfDictionary;
+    if (signature is PdfReferenceHolder && signature.object != null && signature.object is PdfDictionary) {
+      final PdfDictionary signatureDictionary = signature.object! as PdfDictionary;
       _signature = PdfSignature();
       PdfSignatureHelper.getHelper(_signature!).document = crossTable!.document;
       String? subFilterType = '';
       if (signatureDictionary.containsKey(PdfDictionaryProperties.subFilter)) {
-        final IPdfPrimitive? filter = PdfCrossTable.dereference(
-            signatureDictionary[PdfDictionaryProperties.subFilter]);
+        final IPdfPrimitive? filter = PdfCrossTable.dereference(signatureDictionary[PdfDictionaryProperties.subFilter]);
         if (filter != null && filter is PdfName) {
           subFilterType = filter.name;
         }
@@ -190,119 +147,72 @@ class PdfSignatureField extends PdfField {
           _signature!.cryptographicStandard = CryptographicStandard.cades;
         }
       }
-      if (crossTable.document != null &&
-          !PdfDocumentHelper.getHelper(crossTable.document!).isLoadedDocument) {
-        if (signatureDictionary
-            .containsKey(PdfDictionaryProperties.reference)) {
-          final IPdfPrimitive? tempArray =
-              signatureDictionary[PdfDictionaryProperties.reference];
+      if (crossTable.document != null && !PdfDocumentHelper.getHelper(crossTable.document!).isLoadedDocument) {
+        if (signatureDictionary.containsKey(PdfDictionaryProperties.reference)) {
+          final IPdfPrimitive? tempArray = signatureDictionary[PdfDictionaryProperties.reference];
           if (tempArray != null && tempArray is PdfArray) {
             final IPdfPrimitive? tempDictionary = tempArray.elements[0];
             if (tempDictionary != null && tempDictionary is PdfDictionary) {
               if (tempDictionary.containsKey(PdfDictionaryProperties.data)) {
-                final PdfMainObjectCollection mainObjectCollection =
-                    PdfDocumentHelper.getHelper(crossTable.document!).objects;
-                IPdfPrimitive? tempReferenceHolder =
-                    tempDictionary[PdfDictionaryProperties.data];
-                if (tempReferenceHolder != null &&
-                    tempReferenceHolder is PdfReferenceHolder &&
-                    !mainObjectCollection
-                        .containsReference(tempReferenceHolder.reference!)) {
-                  final IPdfPrimitive? tempObject = mainObjectCollection
-                      .objectCollection![
-                          tempReferenceHolder.reference!.objectCollectionIndex!]
-                      .object;
+                final PdfMainObjectCollection mainObjectCollection = PdfDocumentHelper.getHelper(crossTable.document!).objects;
+                IPdfPrimitive? tempReferenceHolder = tempDictionary[PdfDictionaryProperties.data];
+                if (tempReferenceHolder != null && tempReferenceHolder is PdfReferenceHolder && !mainObjectCollection.containsReference(tempReferenceHolder.reference!)) {
+                  final IPdfPrimitive? tempObject = mainObjectCollection.objectCollection![tempReferenceHolder.reference!.objectCollectionIndex!].object;
                   tempReferenceHolder = PdfReferenceHolder(tempObject);
-                  tempDictionary.setProperty(
-                      PdfDictionaryProperties.data, tempReferenceHolder);
+                  tempDictionary.setProperty(PdfDictionaryProperties.data, tempReferenceHolder);
                 }
               }
             }
           }
         }
         signatureDictionary.remove(PdfDictionaryProperties.byteRange);
-        PdfSignatureDictionary.fromDictionary(
-            crossTable.document!, signatureDictionary);
+        PdfSignatureDictionary.fromDictionary(crossTable.document!, signatureDictionary);
         _helper.dictionary!.remove(PdfDictionaryProperties.contents);
         _helper.dictionary!.remove(PdfDictionaryProperties.byteRange);
       }
-      if (signatureDictionary.containsKey(PdfDictionaryProperties.m) &&
-          signatureDictionary[PdfDictionaryProperties.m] is PdfString) {
-        PdfSignatureHelper.getHelper(_signature!).dateOfSign =
-            _helper.dictionary!.getDateTime(
-                signatureDictionary[PdfDictionaryProperties.m]! as PdfString);
+      if (signatureDictionary.containsKey(PdfDictionaryProperties.m) && signatureDictionary[PdfDictionaryProperties.m] is PdfString) {
+        PdfSignatureHelper.getHelper(_signature!).dateOfSign = _helper.dictionary!.getDateTime(signatureDictionary[PdfDictionaryProperties.m]! as PdfString);
       }
-      if (signatureDictionary.containsKey(PdfDictionaryProperties.name) &&
-          signatureDictionary[PdfDictionaryProperties.name] is PdfString) {
-        _signature!.signedName =
-            (signatureDictionary[PdfDictionaryProperties.name]! as PdfString)
-                .value;
+      if (signatureDictionary.containsKey(PdfDictionaryProperties.name) && signatureDictionary[PdfDictionaryProperties.name] is PdfString) {
+        _signature!.signedName = (signatureDictionary[PdfDictionaryProperties.name]! as PdfString).value;
       }
       if (signatureDictionary.containsKey(PdfDictionaryProperties.reason)) {
-        final IPdfPrimitive? reason = PdfCrossTable.dereference(
-            signatureDictionary[PdfDictionaryProperties.reason]);
+        final IPdfPrimitive? reason = PdfCrossTable.dereference(signatureDictionary[PdfDictionaryProperties.reason]);
         if (reason != null && reason is PdfString) {
           _signature!.reason = reason.value;
         }
       }
       if (signatureDictionary.containsKey(PdfDictionaryProperties.location)) {
-        final IPdfPrimitive? location = PdfCrossTable.dereference(
-            signatureDictionary[PdfDictionaryProperties.location]);
+        final IPdfPrimitive? location = PdfCrossTable.dereference(signatureDictionary[PdfDictionaryProperties.location]);
         if (location != null && location is PdfString) {
           _signature!.locationInfo = location.value;
         }
       }
-      if (signatureDictionary
-          .containsKey(PdfDictionaryProperties.contactInfo)) {
-        final IPdfPrimitive? contactInfo = PdfCrossTable.dereference(
-            signatureDictionary[PdfDictionaryProperties.contactInfo]);
+      if (signatureDictionary.containsKey(PdfDictionaryProperties.contactInfo)) {
+        final IPdfPrimitive? contactInfo = PdfCrossTable.dereference(signatureDictionary[PdfDictionaryProperties.contactInfo]);
         if (contactInfo != null && contactInfo is PdfString) {
           _signature!.contactInfo = contactInfo.value;
         }
       }
       if (signatureDictionary.containsKey(PdfDictionaryProperties.byteRange)) {
-        PdfSignatureHelper.getHelper(_signature!).byteRange =
-            signatureDictionary[PdfDictionaryProperties.byteRange] as PdfArray?;
+        PdfSignatureHelper.getHelper(_signature!).byteRange = signatureDictionary[PdfDictionaryProperties.byteRange] as PdfArray?;
         if (crossTable.documentCatalog != null) {
           final PdfDictionary catalog = crossTable.documentCatalog!;
           bool hasPermission = false;
           if (catalog.containsKey(PdfDictionaryProperties.perms)) {
-            final IPdfPrimitive? primitive =
-                catalog[PdfDictionaryProperties.perms];
-            final IPdfPrimitive? catalogDictionary =
-                (primitive is PdfReferenceHolder)
-                    ? primitive.object
-                    : primitive;
-            if (catalogDictionary != null &&
-                catalogDictionary is PdfDictionary &&
-                catalogDictionary.containsKey(PdfDictionaryProperties.docMDP)) {
-              final IPdfPrimitive? docPermission =
-                  catalogDictionary[PdfDictionaryProperties.docMDP];
-              final IPdfPrimitive? permissionDictionary =
-                  (docPermission is PdfReferenceHolder)
-                      ? docPermission.object
-                      : docPermission;
-              if (permissionDictionary != null &&
-                  permissionDictionary is PdfDictionary &&
-                  permissionDictionary
-                      .containsKey(PdfDictionaryProperties.byteRange)) {
-                final IPdfPrimitive? byteRange = PdfCrossTable.dereference(
-                    permissionDictionary[PdfDictionaryProperties.byteRange]);
+            final IPdfPrimitive? primitive = catalog[PdfDictionaryProperties.perms];
+            final IPdfPrimitive? catalogDictionary = (primitive is PdfReferenceHolder) ? primitive.object : primitive;
+            if (catalogDictionary != null && catalogDictionary is PdfDictionary && catalogDictionary.containsKey(PdfDictionaryProperties.docMDP)) {
+              final IPdfPrimitive? docPermission = catalogDictionary[PdfDictionaryProperties.docMDP];
+              final IPdfPrimitive? permissionDictionary = (docPermission is PdfReferenceHolder) ? docPermission.object : docPermission;
+              if (permissionDictionary != null && permissionDictionary is PdfDictionary && permissionDictionary.containsKey(PdfDictionaryProperties.byteRange)) {
+                final IPdfPrimitive? byteRange = PdfCrossTable.dereference(permissionDictionary[PdfDictionaryProperties.byteRange]);
                 bool isValid = true;
-                if (byteRange != null &&
-                    byteRange is PdfArray &&
-                    _signature != null &&
-                    PdfSignatureHelper.getHelper(_signature!).byteRange !=
-                        null) {
+                if (byteRange != null && byteRange is PdfArray && _signature != null && PdfSignatureHelper.getHelper(_signature!).byteRange != null) {
                   for (int i = 0; i < byteRange.count; i++) {
                     final IPdfPrimitive? byteValue = byteRange[i];
-                    final IPdfPrimitive? signByte =
-                        PdfSignatureHelper.getHelper(_signature!).byteRange![i];
-                    if (byteValue != null &&
-                        signByte != null &&
-                        byteValue is PdfNumber &&
-                        signByte is PdfNumber &&
-                        byteValue.value != signByte.value) {
+                    final IPdfPrimitive? signByte = PdfSignatureHelper.getHelper(_signature!).byteRange![i];
+                    if (byteValue != null && signByte != null && byteValue is PdfNumber && signByte is PdfNumber && byteValue.value != signByte.value) {
                       isValid = false;
                       break;
                     }
@@ -312,35 +222,24 @@ class PdfSignatureField extends PdfField {
               }
             }
           }
-          if (hasPermission &&
-              signatureDictionary
-                  .containsKey(PdfDictionaryProperties.reference)) {
-            IPdfPrimitive? primitive =
-                signatureDictionary[PdfDictionaryProperties.reference];
+          if (hasPermission && signatureDictionary.containsKey(PdfDictionaryProperties.reference)) {
+            IPdfPrimitive? primitive = signatureDictionary[PdfDictionaryProperties.reference];
             if (primitive is PdfArray) {
               primitive = primitive.elements[0];
             }
-            IPdfPrimitive? reference = (primitive is PdfReferenceHolder)
-                ? primitive.object
-                : primitive;
-            if (reference != null &&
-                reference is PdfDictionary &&
-                reference.containsKey('TransformParams')) {
+            IPdfPrimitive? reference = (primitive is PdfReferenceHolder) ? primitive.object : primitive;
+            if (reference != null && reference is PdfDictionary && reference.containsKey('TransformParams')) {
               primitive = reference['TransformParams'];
               if (primitive is PdfReferenceHolder) {
                 reference = primitive.object as PdfDictionary?;
               } else if (primitive is PdfDictionary) {
                 reference = primitive;
               }
-              if (reference is PdfDictionary &&
-                  reference.containsKey(PdfDictionaryProperties.p)) {
-                final IPdfPrimitive? permissionNumber =
-                    PdfCrossTable.dereference(
-                        reference[PdfDictionaryProperties.p]);
+              if (reference is PdfDictionary && reference.containsKey(PdfDictionaryProperties.p)) {
+                final IPdfPrimitive? permissionNumber = PdfCrossTable.dereference(reference[PdfDictionaryProperties.p]);
                 if (permissionNumber != null && permissionNumber is PdfNumber) {
-                  _signature!.documentPermissions =
-                      PdfSignatureHelper.getHelper(_signature!)
-                          .getCertificateFlags(permissionNumber.value! as int);
+                  print('permissionNumber.value');
+                  _signature!.documentPermissions = PdfSignatureHelper.getHelper(_signature!).getCertificateFlags(permissionNumber.value!.toInt());
                 }
               }
             }
@@ -365,8 +264,7 @@ class PdfSignatureFieldHelper extends PdfFieldHelper {
   }
 
   /// internal method
-  static PdfSignatureField loadSignatureField(
-      PdfDictionary dictionary, PdfCrossTable crossTable) {
+  static PdfSignatureField loadSignatureField(PdfDictionary dictionary, PdfCrossTable crossTable) {
     return PdfSignatureField._(dictionary, crossTable);
   }
 
@@ -380,36 +278,28 @@ class PdfSignatureFieldHelper extends PdfFieldHelper {
     if (!isLoadedField) {
       super.draw();
       if (PdfAnnotationHelper.getHelper(widget!).appearance != null) {
-        signatureField.page!.graphics.drawPdfTemplate(
-            widget!.appearance.normal, signatureField.bounds.topLeft);
+        signatureField.page!.graphics.drawPdfTemplate(widget!.appearance.normal, signatureField.bounds.topLeft);
       }
     } else if (flattenField) {
       if (dictionary![PdfDictionaryProperties.ap] != null) {
-        final IPdfPrimitive? tempDictionary =
-            dictionary![PdfDictionaryProperties.ap];
-        final IPdfPrimitive? appearanceDictionary =
-            PdfCrossTable.dereference(tempDictionary);
+        final IPdfPrimitive? tempDictionary = dictionary![PdfDictionaryProperties.ap];
+        final IPdfPrimitive? appearanceDictionary = PdfCrossTable.dereference(tempDictionary);
         PdfTemplate template;
-        if (appearanceDictionary != null &&
-            appearanceDictionary is PdfDictionary) {
-          final IPdfPrimitive? appearanceRefHolder =
-              appearanceDictionary[PdfDictionaryProperties.n];
-          final IPdfPrimitive? objectDictionary =
-              PdfCrossTable.dereference(appearanceRefHolder);
+        if (appearanceDictionary != null && appearanceDictionary is PdfDictionary) {
+          final IPdfPrimitive? appearanceRefHolder = appearanceDictionary[PdfDictionaryProperties.n];
+          final IPdfPrimitive? objectDictionary = PdfCrossTable.dereference(appearanceRefHolder);
           if (objectDictionary != null && objectDictionary is PdfDictionary) {
             if (objectDictionary is PdfStream) {
               final PdfStream stream = objectDictionary;
               template = PdfTemplateHelper.fromPdfStream(stream);
-              signatureField.page!.graphics
-                  .drawPdfTemplate(template, signatureField.bounds.topLeft);
+              signatureField.page!.graphics.drawPdfTemplate(template, signatureField.bounds.topLeft);
             }
           }
         }
       } else {
         //signature field without appearance dictionary
         final PdfBrush brush = PdfSolidBrush(getBackColor(true));
-        final GraphicsProperties graphicsProperties =
-            GraphicsProperties(signatureField);
+        final GraphicsProperties graphicsProperties = GraphicsProperties(signatureField);
         final PaintParams paintingParameters = PaintParams(
             bounds: graphicsProperties.bounds,
             backBrush: brush,
@@ -418,8 +308,7 @@ class PdfSignatureFieldHelper extends PdfFieldHelper {
             style: graphicsProperties.style,
             borderWidth: graphicsProperties.borderWidth,
             shadowBrush: graphicsProperties.shadowBrush);
-        FieldPainter()
-            .drawSignature(signatureField.page!.graphics, paintingParameters);
+        FieldPainter().drawSignature(signatureField.page!.graphics, paintingParameters);
       }
     }
   }

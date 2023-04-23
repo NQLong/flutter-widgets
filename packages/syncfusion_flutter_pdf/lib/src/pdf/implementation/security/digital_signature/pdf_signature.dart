@@ -40,6 +40,7 @@ class PdfSignature {
 
   //Fields
   late PdfSignatureHelper _helper;
+  PdfSignatureHelper get helper => _helper;
   List<List<int>>? _externalRootCert;
 
   //Properties
